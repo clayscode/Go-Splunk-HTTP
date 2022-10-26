@@ -37,7 +37,7 @@ func TestWriter_Write(t *testing.T) {
 	// Create a writer that's flushing constantly. We want this test to run
 	// quickly
 	writer := Writer{
-		Client:        NewClient(server.Client(), server.URL, "", "", "", ""),
+		Client:        NewClient(server.Client(), server.URL, "", "", "", "", ""),
 		FlushInterval: 1 * time.Millisecond,
 	}
 	// Send a bunch of messages in separate goroutines to make sure we're properly
@@ -73,7 +73,7 @@ func TestWriter_Errors(t *testing.T) {
 		fmt.Fprintln(w, "bad request")
 	}))
 	writer := Writer{
-		Client: NewClient(server.Client(), server.URL, "", "", "", ""),
+		Client: NewClient(server.Client(), server.URL, "", "", "", "", ""),
 		// Will flush after the last message is sent
 		FlushThreshold: numMessages - 1,
 		// Don't let the flush interval cause raciness
