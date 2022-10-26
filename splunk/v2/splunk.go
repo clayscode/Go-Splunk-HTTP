@@ -60,7 +60,7 @@ func NewClient(httpClient *http.Client, URL string, Token string, Source string,
 		httpClient = &http.Client{Timeout: time.Second * 20, Transport: tr}
 	}
 	if Hostname == "" {
-		hostname, _ := os.Hostname()
+		Hostname, _ := os.Hostname()
 	}
 	c := &Client{
 		HTTPClient: httpClient,
