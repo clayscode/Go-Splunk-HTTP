@@ -77,10 +77,14 @@ func NewClient(httpClient *http.Client, URL string, Token string, Source string,
 // NewEvent creates a new log event to send to Splunk.
 // This should be the primary way a Splunk log object is constructed, and is automatically called by the Log function attached to the client.
 // This method takes the current timestamp for the event, meaning that the event is generated at runtime.
-func (c *Client) NewEvent(event interface{}, source string, sourcetype string, index string) *Event {
+func (c *Client) NewEvent(event interface{}, source string, sourcetype string, index string, hostname string) *Event {
+	host := c.Hostname
+	if hostname != "" {
+		host = hostname
+	}
 	e := &Event{
 		Time:       EventTime{time.Now()},
-		Host:       c.Hostname,
+		Host:       host,
 		Source:     source,
 		SourceType: sourcetype,
 		Index:      index,
@@ -92,10 +96,14 @@ func (c *Client) NewEvent(event interface{}, source string, sourcetype string, i
 // NewEventWithTime creates a new log event with a specified timetamp to send to Splunk.
 // This is similar to NewEvent but if you want to log in a different time rather than time.Now this becomes handy. If that's
 // the case, use this function to create the Event object and the the LogEvent function.
-func (c *Client) NewEventWithTime(t time.Time, event interface{}, source string, sourcetype string, index string) *Event {
+func (c *Client) NewEventWithTime(t time.Time, event interface{}, source string, sourcetype string, index string, hostname string) *Event {
+	host := c.Hostname
+	if hostname != "" {
+		host = hostname
+	}
 	e := &Event{
 		Time:       EventTime{t},
-		Host:       c.Hostname,
+		Host:       host,
 		Source:     source,
 		SourceType: sourcetype,
 		Index:      index,
@@ -111,7 +119,7 @@ func (c *Client) NewEventWithTime(t time.Time, event interface{}, source string,
 // The function auto-generates the event timestamp and hostname for you.
 func (c *Client) Log(event interface{}) error {
 	// create Splunk log
-	log := c.NewEvent(event, c.Source, c.SourceType, c.Index)
+	log := c.NewEvent(event, c.Source, c.SourceType, c.Index, "")
 	return c.LogEvent(log)
 }
 
@@ -120,7 +128,7 @@ func (c *Client) Log(event interface{}) error {
 // This is similar to Client.Log, just with the t parameter.
 func (c *Client) LogWithTime(t time.Time, event interface{}) error {
 	// create Splunk log
-	log := c.NewEventWithTime(t, event, c.Source, c.SourceType, c.Index)
+	log := c.NewEventWithTime(t, event, c.Source, c.SourceType, c.Index, "")
 	return c.LogEvent(log)
 }
 
